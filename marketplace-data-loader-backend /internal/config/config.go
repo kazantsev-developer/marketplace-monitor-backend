@@ -1,4 +1,4 @@
-// Package config содержит структуры конфигурации и функцию загрузки из переменных окружения
+// Package config contains configuration structures and loading function from environment variables
 package config
 
 import (
@@ -83,6 +83,10 @@ func LoadConfig() (*Config, error) {
 	}
 	if cfg.MS.Token == "" {
 		return nil, fmt.Errorf("MS_TOKEN обязателен")
+	}
+
+	if cfg.DB.Port < 1 || cfg.DB.Port > 65535 {
+		return nil, fmt.Errorf("DB_PORT должен быть в диапазоне 1-65535, получен %d", cfg.DB.Port)
 	}
 
 	return &cfg, nil
