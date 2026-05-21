@@ -1,4 +1,4 @@
-// Package config contains configuration structures and loading function from environment variables
+// Package config управляет конфигурацией приложения.
 package config
 
 import (
@@ -8,6 +8,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+// Config содержит конфигурационные параметры всего приложения.
 type Config struct {
 	WB       WBConfig
 	DB       DBConfig
@@ -18,16 +19,18 @@ type Config struct {
 	Env      string `envconfig:"NODE_ENV" default:"development"`
 }
 
+// WBConfig содержит параметры подключения к API Wildberries.
 type WBConfig struct {
 	Token             string        `envconfig:"API_TOKEN" required:"true"`
-	BaseURL           string        `envconfig:"BASE_URL" default:"https://statistics-api.wildberries.ru"`
+	BaseURL           string        `envconfig:"BASE_URL" default:"https://wildberries.ru"`
 	OrdersEndpoint    string        `envconfig:"ORDERS_ENDPOINT" default:"/api/v1/supplier/orders"`
 	Timeout           time.Duration `envconfig:"TIMEOUT" default:"30s"`
 	MaxRetries        int           `envconfig:"MAX_RETRIES" default:"3"`
-	PaginationDelayMs int           `envconfig:"PAGINATION_DELAY_MS" default:"61000"`
+	PaginationDelayMs int           `envconfig:"PAGINATION_DELAY_MS" default:"61000"` // Ограничение частоты запросов к разделу статистики WB
 	Flag              int           `envconfig:"FLAG" default:"0"`
 }
 
+// DBConfig содержит конфигурационные параметры пула соединений с БД.
 type DBConfig struct {
 	Host              string `envconfig:"HOST" required:"true"`
 	Port              int    `envconfig:"PORT" default:"5432"`
@@ -39,10 +42,11 @@ type DBConfig struct {
 	PoolConnTimeoutMs int    `envconfig:"POOL_CONN_TIMEOUT_MS" default:"5000"`
 }
 
+// OzonConfig содержит параметры подключения к Seller API Ozon.
 type OzonConfig struct {
 	ClientID          string        `envconfig:"CLIENT_ID" required:"true"`
 	APIKey            string        `envconfig:"API_KEY" required:"true"`
-	BaseURL           string        `envconfig:"BASE_URL" default:"https://api-seller.ozon.ru"`
+	BaseURL           string        `envconfig:"BASE_URL" default:"https://ozon.ru"`
 	FBOEndpoint       string        `envconfig:"FBO_ENDPOINT" default:"/v2/posting/fbo/list"`
 	FBSEndpoint       string        `envconfig:"FBS_ENDPOINT" default:"/v3/posting/fbs/list"`
 	Limit             int           `envconfig:"LIMIT" default:"1000"`
@@ -50,16 +54,18 @@ type OzonConfig struct {
 	PaginationDelayMs int           `envconfig:"PAGINATION_DELAY_MS" default:"200"`
 }
 
+// MoyskladConfig содержит параметры интеграции с JSON API МойСклад.
 type MoyskladConfig struct {
 	Token               string        `envconfig:"TOKEN" required:"true"`
-	BaseURL             string        `envconfig:"BASE_URL" default:"https://api.moysklad.ru/api/remap/1.2"`
+	BaseURL             string        `envconfig:"BASE_URL" default:"https://moysklad.ru"`
 	Timeout             time.Duration `envconfig:"TIMEOUT" default:"60s"`
 	MaxRetries          int           `envconfig:"MAX_RETRIES" default:"5"`
 	RetryDelayMs        int           `envconfig:"RETRY_DELAY_MS" default:"5000"`
 	PaginationDelayMs   int           `envconfig:"PAGINATION_DELAY_MS" default:"2000"`
-	HeavyRequestDelayMs int           `envconfig:"HEAVY_REQUEST_DELAY_MS" default:"20000"`
+	HeavyRequestDelayMs int           `envconfig:"HEAVY_REQUEST_DELAY_MS" default:"20000"` // Ограничение лимитов на тяжелые отчеты остатков ERP
 }
 
+// SettingsConfig содержит глобальные параметры бизнес-логики синхронизации.
 type SettingsConfig struct {
 	BatchSize        int    `envconfig:"BATCH_SIZE" default:"1000"`
 	DaysToLoad       int    `envconfig:"DAYS_TO_LOAD" default:"30"`
@@ -68,6 +74,7 @@ type SettingsConfig struct {
 	UniqueOrderField string `envconfig:"UNIQUE_ORDER_FIELD" default:"srid"`
 }
 
+// LoadConfig выполняет инициализацию и валидацию конфигурации из переменных окружения.
 func LoadConfig() (*Config, error) {
 	var cfg Config
 	err := envconfig.Process("", &cfg)

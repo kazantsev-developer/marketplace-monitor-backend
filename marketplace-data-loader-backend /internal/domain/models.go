@@ -1,4 +1,4 @@
-// Package domain defines core business entities and repository interfaces.
+// Package domain предоставляет основные бизнес-сущности.
 package domain
 
 import (
@@ -6,10 +6,9 @@ import (
 	"time"
 )
 
-// Wildberries
-
+// WbOrder описывает структуру заказа из API Wildberries.
 type WbOrder struct {
-	Srid            string    `json:"srid" db:"srid"`
+	Srid            string    `json:"srid" db:"srid"` // Уникальный идентификатор позиции в заказе
 	GNumber         string    `json:"g_number" db:"g_number"`
 	Date            time.Time `json:"date" db:"date"`
 	LastChangeDate  time.Time `json:"last_change_date" db:"last_change_date"`
@@ -31,6 +30,7 @@ type WbOrder struct {
 	UpdatedAt       time.Time `json:"updated_at" db:"updated_at"`
 }
 
+// WbRemain описывает структуру остатка товара на складе Wildberries.
 type WbRemain struct {
 	NmID      int64     `json:"nm_id" db:"nm_id"`
 	Size      string    `json:"size" db:"size"`
@@ -40,6 +40,7 @@ type WbRemain struct {
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
 
+// WbCard описывает структуру карточки товара Wildberries.
 type WbCard struct {
 	NmID            int64           `json:"nm_id" db:"nm_id"`
 	VendorCode      string          `json:"vendor_code" db:"vendor_code"`
@@ -48,21 +49,20 @@ type WbCard struct {
 	Description     *string         `json:"description" db:"description"`
 	Category        *string         `json:"category" db:"category"`
 	Subject         *string         `json:"subject" db:"subject"`
-	Characteristics json.RawMessage `json:"characteristics" db:"characteristics"`
-	Sizes           json.RawMessage `json:"sizes" db:"sizes"`
-	Photos          json.RawMessage `json:"photos" db:"photos"`
+	Characteristics json.RawMessage `json:"characteristics" db:"characteristics"` // Сырые JSON-данные характеристик товара
+	Sizes           json.RawMessage `json:"sizes" db:"sizes"`                     // Сырые JSON-данные размерной сетки
+	Photos          json.RawMessage `json:"photos" db:"photos"`                   // Сырые JSON-данные ссылок на медиафайлы
 	Video           *string         `json:"video" db:"video"`
-	Dimensions      json.RawMessage `json:"dimensions" db:"dimensions"`
+	Dimensions      json.RawMessage `json:"dimensions" db:"dimensions"` // Сырые JSON-данные габаритов товара
 	Weight          *int            `json:"weight" db:"weight"`
 	UpdatedAt       time.Time       `json:"updated_at" db:"updated_at"`
 	CreatedAt       time.Time       `json:"created_at" db:"created_at"`
 	SyncedAt        time.Time       `json:"synced_at" db:"synced_at"`
 }
 
-// Ozon
-
+// OzonOrder описывает структуру отправления из API Ozon.
 type OzonOrder struct {
-	PostingNumber      string          `json:"posting_number" db:"posting_number"`
+	PostingNumber      string          `json:"posting_number" db:"posting_number"` // Уникальный номер отправления Ozon
 	OrderID            *int64          `json:"order_id" db:"order_id"`
 	OrderNumber        *string         `json:"order_number" db:"order_number"`
 	Status             *string         `json:"status" db:"status"`
@@ -72,13 +72,14 @@ type OzonOrder struct {
 	InProcessAt        *time.Time      `json:"in_process_at" db:"in_process_at"`
 	ShipmentDate       *time.Time      `json:"shipment_date" db:"shipment_date"`
 	DeliveringDate     *time.Time      `json:"delivering_date" db:"delivering_date"`
-	Products           json.RawMessage `json:"products" db:"products"`
-	AnalyticsData      json.RawMessage `json:"analytics_data" db:"analytics_data"`
-	FinancialData      json.RawMessage `json:"financial_data" db:"financial_data"`
+	Products           json.RawMessage `json:"products" db:"products"`             // Сырые JSON-данные списка продуктов в заказе
+	AnalyticsData      json.RawMessage `json:"analytics_data" db:"analytics_data"` // Сырые JSON-данные аналитического блока Ozon
+	FinancialData      json.RawMessage `json:"financial_data" db:"financial_data"` // Сырые JSON-данные финансовых начислений и комиссий
 	Scheme             *string         `json:"scheme" db:"scheme"`
 	UpdatedAt          time.Time       `json:"updated_at" db:"updated_at"`
 }
 
+// OzonRemain описывает структуру остатка товара на складе Ozon.
 type OzonRemain struct {
 	Sku              int64     `json:"sku" db:"sku"`
 	ProductID        int64     `json:"product_id" db:"product_id"`
@@ -92,8 +93,7 @@ type OzonRemain struct {
 	SyncedAt         time.Time `json:"synced_at" db:"synced_at"`
 }
 
-// Moysklad
-
+// MsStore описывает структуру склада из ERP МойСклад.
 type MsStore struct {
 	UUID         string    `json:"uuid" db:"uuid"`
 	Name         string    `json:"name" db:"name"`
@@ -105,12 +105,14 @@ type MsStore struct {
 	SyncedAt     time.Time `json:"synced_at" db:"synced_at"`
 }
 
+// MsSnapshot описывает зафиксированную точку исторического среза данных.
 type MsSnapshot struct {
 	ID          int       `json:"id" db:"id"`
 	CollectedAt time.Time `json:"collected_at" db:"collected_at"`
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 }
 
+// MsStockDetail описывает детальные остатки товара на конкретном складе МойСклад.
 type MsStockDetail struct {
 	SnapshotID  int       `json:"snapshot_id" db:"snapshot_id"`
 	ProductUUID string    `json:"product_uuid" db:"product_uuid"`
@@ -121,6 +123,7 @@ type MsStockDetail struct {
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 }
 
+// MsProductTotal описывает агрегированные остатки товара по всем складам МойСклад.
 type MsProductTotal struct {
 	ProductUUID    string    `json:"product_uuid" db:"product_uuid"`
 	Article        *string   `json:"article" db:"article"`
@@ -133,6 +136,7 @@ type MsProductTotal struct {
 	CreatedAt      time.Time `json:"created_at" db:"created_at"`
 }
 
+// MsJobLog описывает структуру лога фонового джоба МойСклад.
 type MsJobLog struct {
 	ID                   int       `json:"id" db:"id"`
 	StartedAt            time.Time `json:"started_at" db:"started_at"`
@@ -145,8 +149,7 @@ type MsJobLog struct {
 	CreatedAt            time.Time `json:"created_at" db:"created_at"`
 }
 
-// Sync/logs
-
+// SyncLog описывает структуру общего лога синхронизации сущностей.
 type SyncLog struct {
 	ID                   int        `json:"id" db:"id"`
 	SyncAt               time.Time  `json:"sync_at" db:"sync_at"`
@@ -160,67 +163,12 @@ type SyncLog struct {
 	EntityType           string     `json:"entity_type" db:"entity_type"`
 }
 
+// OzonSyncLog описывает структуру специализированного лога синхронизации Ozon.
 type OzonSyncLog struct {
-	ID              int        `json:"id" db:"id"`
-	SyncAt          time.Time  `json:"sync_at" db:"sync_at"`
-	Status          string     `json:"status" db:"status"`
-	Scheme          string     `json:"scheme" db:"scheme"`
-	RecordsCount    int        `json:"records_count" db:"records_count"`
-	DateFrom        *time.Time `json:"date_from" db:"date_from"`
-	DateTo          *time.Time `json:"date_to" db:"date_to"`
-	ErrorMessage    *string    `json:"error_message" db:"error_message"`
-	ExecutionTimeMs int        `json:"execution_time_ms" db:"execution_time_ms"`
-}
-
-type SyncCursorState struct {
-	ID            int        `json:"id" db:"id"`
-	LastUpdatedAt *time.Time `json:"last_updated_at" db:"last_updated_at"`
-	LastNmID      *int64     `json:"last_nm_id" db:"last_nm_id"`
-	UpdatedAt     time.Time  `json:"updated_at" db:"updated_at"`
-}
-
-// API/dashboard
-
-type PaginatedResponse[T any] struct {
-	Data       []T        `json:"data"`
-	Pagination Pagination `json:"pagination"`
-}
-
-type Pagination struct {
-	Total  int `json:"total"`
-	Limit  int `json:"limit"`
-	Offset int `json:"offset"`
-}
-
-type DashboardStats struct {
-	WB       WBDashboardStats   `json:"wb"`
-	Ozon     OzonDashboardStats `json:"ozon"`
-	Moysklad MoyskladStats      `json:"moysklad"`
-	Sync     SyncDashboardStats `json:"sync"`
-}
-
-type WBDashboardStats struct {
-	Orders  int `json:"orders"`
-	Remains int `json:"remains"`
-	Cards   int `json:"cards"`
-}
-
-type OzonDashboardStats struct {
-	Orders  int `json:"orders"`
-	Remains int `json:"remains"`
-}
-
-type MoyskladStats struct {
-	TotalStock int `json:"total_stock"`
-}
-
-type SyncDashboardStats struct {
-	Last24h     int `json:"last_24h"`
-	SuccessRate int `json:"success_rate"`
-}
-
-type DailyChartItem struct {
-	Date       string `json:"date"`
-	WbOrders   int    `json:"wb_orders"`
-	OzonOrders int    `json:"ozon_orders"`
+	ID           int        `json:"id" db:"id"`
+	SyncAt       time.Time  `json:"sync_at" db:"sync_at"`
+	Status       string     `json:"status" db:"status"`
+	Scheme       string     `json:"scheme" db:"scheme"`
+	RecordsCount int        `json:"records_count" db:"records_count"`
+	DateFrom     *time.Time `json:"date_from" db:"date_from"`
 }
