@@ -172,3 +172,13 @@ type OzonSyncLog struct {
 	RecordsCount int        `json:"records_count" db:"records_count"`
 	DateFrom     *time.Time `json:"date_from" db:"date_from"`
 }
+
+type DailyChartItem struct {
+	Date  string
+	Count int
+}
+
+type SyncCursorState struct {
+	UpdatedAt string
+	NmID      int64
+}

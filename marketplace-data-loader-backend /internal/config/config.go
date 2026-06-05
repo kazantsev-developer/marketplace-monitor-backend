@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
-)
+) 
 
 // Config содержит конфигурационные параметры всего приложения.
 type Config struct {
