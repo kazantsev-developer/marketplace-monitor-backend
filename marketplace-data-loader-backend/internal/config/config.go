@@ -10,7 +10,7 @@ import (
 
 // Config holds all configuration parameters for the application
 type Config struct {
-	WB       WBConfig       `envconfig:"WB"`
+	WB       WbConfig       `envconfig:"WB"`
 	DB       DBConfig       `envconfig:"DB"`
 	Ozon     OzonConfig     `envconfig:"OZON"`
 	MS       MoyskladConfig `envconfig:"MS"`
@@ -19,8 +19,8 @@ type Config struct {
 	Env      string         `envconfig:"APP_ENV" default:"development"`
 }
 
-// WBConfig contains Wildberries API connection parameters
-type WBConfig struct {
+// WbConfig contains Wildberries API connection parameters
+type WbConfig struct {
 	Token             string        `envconfig:"API_TOKEN" required:"true"`
 	BaseURL           string        `envconfig:"BASE_URL" default:"https://wildberries.ru"`
 	OrdersEndpoint    string        `envconfig:"ORDERS_ENDPOINT" default:"/api/v1/supplier/orders"`
@@ -73,6 +73,7 @@ type SettingsConfig struct {
 	ExcludeToday     bool   `envconfig:"EXCLUDE_TODAY" default:"true"`
 	APILimit         int    `envconfig:"API_LIMIT" default:"80000"`
 	UniqueOrderField string `envconfig:"UNIQUE_ORDER_FIELD" default:"srid"`
+	BatchDelayMs     int    `envconfig:"BATCH_DELAY_MS" default:"500"`
 }
 
 // LoadConfig reads configuration from environment variables with proper prefixes

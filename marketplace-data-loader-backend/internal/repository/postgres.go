@@ -4,7 +4,7 @@ package repository
 import (
 	"context"
 	"fmt"
-	"strings"
+	"net/url"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -13,18 +13,16 @@ import (
 
 // NewPool creates and initializes a new PostgreSQL connection pool
 func NewPool(ctx context.Context, cfg config.DBConfig) (*pgxpool.Pool, error) {
-	safePassword := strings.ReplaceAll(cfg.Password, "'", "\\'")
-	dsn := fmt.Sprintf(
-		"host=%s port=%d user=%s password='%s' dbname=%s sslmode=%s",
-		cfg.Host,
+	connString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
+		url.PathEscape(cfg.User),
+		url.PathEscape(cfg.Password),
+		url.PathEscape(cfg.Host),
 		cfg.Port,
-		cfg.User,
-		safePassword,
-		cfg.Name,
-		cfg.SSLMode,
+		url.PathEscape(cfg.Name),
+		url.PathEscape(cfg.SSLMode),
 	)
 
-	poolCfg, err := pgxpool.ParseConfig(dsn)
+	poolCfg, err := pgxpool.ParseConfig(connString)
 	if err != nil {
 		return nil, fmt.Errorf("parse dsn config: %w", err)
 	}
