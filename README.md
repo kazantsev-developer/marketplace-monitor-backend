@@ -32,7 +32,7 @@ cp .env.example .env # fill in all tokens
 ./bin/server # start API
 ./bin/sync --entity=ozon_orders # or others:
 
-# available entities: ozon_orders, ozon_stocks, wb_orders, wb_remains, wb_cards, ms_stocks
+## available entities: ozon_orders, ozon_stocks, wb_orders, wb_remains, wb_cards, ms_stocks
 
 Or with Docker Compose:
 docker-compose up -d
