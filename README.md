@@ -1,108 +1,114 @@
-# Marketplace Data Loader
+# Marketplace Monitor Platform (Backend)
 
-A high-performance data synchronization service designed to aggregate orders, stock levels, and product metadata from Ozon, Wildberries, and MoySklad. The service exposes a REST API for consumption by frontend monitoring dashboards.
+Core data synchronization engine and backend monolith for the Marketplace Monitor Platform ecosystem. Built with Go 1.24, Gin, GORM, and PostgreSQL 16. Provides a high-performance, concurrent, and low-latency REST API to aggregate and stream real-time orders, warehouse stock telemetry, and product catalog metadata from Ozon, Wildberries, and MoySklad.
 
 ## Tech Stack
 
-- Runtime: Go 1.24 or higher
-- Database: PostgreSQL 16 or higher
-- Containerization: Docker / Docker Compose
+- **Runtime Environment** — Go 1.24 or higher (Concurrent execution pools)
+- **Database Engine** — PostgreSQL 16 or higher (Relational mapping ledger)
+- **Container Architecture** — Docker / Docker Compose orchestration layers
 
-## Features
+## Key Architectural Features
 
-- Ozon Integration: Synchronizes FBO/FBS orders and real-time FBO stock data.
-- Wildberries Integration: Executes full synchronization of orders, stock levels, and product cards.
-- MoySklad Integration: Captures warehouse stock snapshots and constructs product aggregates.
-- REST API Layer: Provides filtered lists, aggregated statistics, and time-series data for charts.
-- Execution Logging: Persists comprehensive metadata for every synchronization job, including status, processed item counts, and precise duration.
+- **Ozon API Integration** — Automated extraction of FBO/FBS orders and concurrent real-time FBO inventory availability datasets.
+- **Wildberries API Integration** — Full pipeline synchronization mapping transactional order metrics, warehouse remnants, and product cards metadata.
+- **MoySklad Client Integration** — Point-in-time enterprise warehouse inventory snapshots capturing raw product aggregate metrics.
+- **Transport API Layer** — Optimized endpoints delivering complex multi-tenant filters, analytical summary aggregations, and highload daily charts datasets.
+- **Granular Execution Logging** — Explicit metadata persistence tracking every single sync task lifecycle, including exact items count delta, state tracking, and duration parameters.
 
-## Quick Start
+## Core Setup Instructions
 
 ### Repository Initialization
 
+Clone the tracking branch context and navigate into the project workspace boundary:
+```bash
 git clone <repo-url>
 cd marketplace-data-loader-backend
+```
 
-### Compilation
+### Binary Compilation
 
-Compile the API server and the synchronization CLI binary:
-
+Compile both the headless REST API network server and the synchronization Command Line Interface (CLI) executable binaries:
+```bash
 go build -o bin/server ./cmd/server
 go build -o bin/sync ./cmd/sync
+```
 
-### Database Initialization
+### Database Initialization Ledger
 
-Ensure a PostgreSQL instance is running, create the target database, and apply the initial schema migrations:
-
+Ensure a local PostgreSQL instance is active, create the application ledger boundaries, and execute initial schema migrations:
+```bash
 createdb marketplace
 psql -d marketplace -f migrations/001_init.up.sql
+```
 
-### Configuration
+### Infrastructure Configuration
 
-Copy the example environment configuration file and populate it with valid credentials:
-
+Clone the baseline configuration variables schema layout file and insert functional merchant secret key parameters:
+```bash
 cp .env.example .env
+```
 
-### Execution
+### Execution Lifecycle
 
-Start the REST API server:
-
+#### Run the REST API Server Engine
+```bash
 ./bin/server
+```
 
-Execute a manual synchronization job for a specific entity:
-
+#### Run Manual Synchronizer Tasks via CLI
+Execute an atomic data extraction job targeting specific merchant integration channels:
+```bash
 ./bin/sync --entity=ozon_orders
+```
 
-Supported arguments for the `--entity` flag:
+Supported arguments for the deterministic `--entity` flag:
+- `ozon_orders` — Sync Ozon FBO/FBS sales records
+- `ozon_stocks` — Sync Ozon FBO inventory availability
+- `wb_orders`   — Sync Wildberries sales volume metrics
+- `wb_remains`  — Sync Wildberries warehouse remnants tracking
+- `wb_cards`    — Sync Wildberries product card catalog content
+- `ms_stocks`   — Sync MoySklad inventory ledger parameters
 
-- `ozon_orders`
-- `ozon_stocks`
-- `wb_orders`
-- `wb_remains`
-- `wb_cards`
-- `ms_stocks`
+### Production Container Orchestration
 
-### Containerized Execution
-
-To run the application ecosystem via Docker Compose:
-
+To initialize stateless backend microservice nodes and database pooling topologies concurrently via Docker Compose:
+```bash
 docker compose up -d
+```
 
-## API Endpoints
+## Core API Endpoints Specification
 
-### Ozon
+### Ozon Operations
+- **GET** `/api/ozon/orders` — Fetches FBO/FBS orders incorporating filtering parameters and server pagination.
+- **GET** `/api/ozon/orders/stats` — Aggregates real-time order statistics broken down by fulfillment scheme.
+- **GET** `/api/ozon/remains` — Returns the current FBO stock inventory array list.
+- **GET** `/api/ozon/remains/stats` — Provides top brand distribution stock volume analytics.
 
-- `GET /api/ozon/orders` — Retrieves FBO/FBS orders with filtering and pagination.
-- `GET /api/ozon/orders/stats` — Provides aggregated order statistics broken down by fulfillment scheme.
-- `GET /api/ozon/remains` — Returns the current FBO stock list.
-- `GET /api/ozon/remains/stats` — Provides stock metrics filtered by top brands.
+### Wildberries Operations
+- **GET** `/api/wb/orders` — Fetches sales logs with explicit date queries and page boundaries.
+- **GET** `/api/wb/orders/stats` — Evaluates aggregated marketplace financial sales and volume analytics.
+- **GET** `/api/wb/remains` — Returns inventory stock balances segmented across distributed physical warehouses.
+- **GET** `/api/wb/cards` — Full-text searchable product catalog card index tracking pagination.
+- **GET** `/api/wb/cards/stats` — Visual item distribution analytics mapping across catalog branches.
 
-### Wildberries
+### MoySklad Corporate Channels
+- **GET** `/api/moysklad/stocks` — Provides inventory parameters cross-referenced by specific store and product keys.
+- **GET** `/api/moysklad/aggregates` — Calculates deep enterprise structural product aggregates.
+- **GET** `/api/moysklad/stores` — Lists all registered active system warehouses.
 
-- `GET /api/wb/orders` — Retrieves orders with date filtering and pagination.
-- `GET /api/wb/orders/stats` — Returns aggregated sales and volume statistics.
-- `GET /api/wb/remains` — Returns stock availability grouped by warehouse.
-- `GET /api/wb/cards` — Lists product cards with text search and pagination.
-- `GET /api/wb/cards/stats` — Provides product card distribution analytics.
+### System Control Core
+- **GET** `/api/health` — Probes core microservice Liveness/Readiness lifecycle state.
+- **GET** `/api/sync/logs` — Comprehensive historical analytics audit database for cron data jobs.
+- **GET** `/api/dashboard/stats` — Compiles global consolidated summary index values for the root UI view.
+- **GET** `/api/charts/orders-daily` — Daily analytical time-series logs tracking Wildberries sales volume.
+- **GET** `/api/charts/ozon-orders-daily` — Daily analytical time-series logs tracking Ozon sales volume.
 
-### MoySklad
+## Infrastructure Environment Configurations
 
-- `GET /api/moysklad/stocks` — Provides inventory status filtered by store and product.
-- `GET /api/moysklad/aggregates` — Returns structural product aggregates.
-- `GET /api/moysklad/stores` — Returns a list of active warehouses.
+Variables must be strictly populated inside the local `.env` configuration context file following this schema definition:
 
-### System
-
-- `GET /api/health` — Returns current service health status.
-- `GET /api/sync/logs` — Retrieves historical execution logs of synchronization jobs.
-- `GET /api/dashboard/stats` — Fetches global summary metrics for the dashboard view.
-- `GET /api/charts/orders-daily` — Outputs daily time-series data for Wildberries orders.
-- `GET /api/charts/ozon-orders-daily` — Outputs daily time-series data for Ozon orders.
-
-## Environment Variables
-
-Configuration parameters must be defined within the `.env` file based on the following reference structure:
-
+```env
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=marketplace
@@ -120,7 +126,8 @@ MS_TOKEN=your_moysklad_token
 
 PORT=3000
 APP_ENV=development
+```
 
-## Deployment
+## Production Deployment Guidelines
 
-Refer to `deploy.md` for production architecture guidelines, including native systemd service provisioning and automated execution via systemd timers.
+For scalable environment provisioning layout operations, inspect the standalone architectural guidelines file `deploy.md`. This contains native instructions for mounting Linux `systemd` service abstractions and automation via `systemd.timer` job triggers.
